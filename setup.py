@@ -37,7 +37,8 @@ setup(
                       'scipy>=1.3',
                       'utide',
                       'tqdm',
-                      'datetime'],
+                      'datetime',
+                      'logging'],
     packages=find_packages(
         exclude=[
             'development',

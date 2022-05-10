@@ -10,11 +10,40 @@ import numpy as np
 import datetime as dt
 import pandas as pd
 from tqdm import tqdm
+import logging
 
-tqdm.pandas()
 
 # Company packages
 import hvec_tide.parsers as pr
+
+
+tqdm.pandas()
+logging.basicConfig(
+    filename = 'hvec_tide.log',
+    level = logging.INFO,
+    encoding = 'utf-8',
+    filemode = 'w'
+)
+
+
+def run_utide_solve(t, h, verbose, **kwargs):
+    """
+    Apply data quality control and error checking
+    before and after running ut.solve
+    """
+    try:
+        sol = ut.solve(
+            t, h, 
+            verbose = verbose,
+            **kwargs
+        )
+    except:
+        logging.warning(
+            'Utide solve did not run succesfully'
+        )
+        return
+       
+    return sol
 
 
 def _create_tepoch(time):
@@ -70,7 +99,7 @@ def tide_and_setup(time, h, sol = 'none', verbose = False, **kwargs):
         if verbose:
             print('No Utide result provided. Running Utide')        
         
-        sol = ut.solve(
+        sol = run_utide_solve(
             t, h, verbose = verbose,
             **kwargs
         )
@@ -108,7 +137,7 @@ def _timeseries_segment(
     t = _create_tepoch(df[col_datetime])
 
     # Create utide bunch object
-    sol = ut.solve(
+    sol = run_utide_solve(
         t, df[col_h], verbose = False, **kwargs
     )
  
@@ -140,7 +169,7 @@ def _constit_segment(
     t = _create_tepoch(df[col_datetime])
 
     # Create utide bunch object
-    sol = ut.solve(
+    sol = run_utide_solve(
         t, df[col_h], verbose = False, **kwargs
     )
 
