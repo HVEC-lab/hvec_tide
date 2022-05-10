@@ -1,1 +1,1 @@
-This package contains solvers, parsers and visualisations for analysis of tides.
+This package contains convenience tools for use with UTide.
