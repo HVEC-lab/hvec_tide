@@ -80,12 +80,12 @@ def parse_utide(
     )
 
     if include_char_levels:
-        res = parse_characteristic_levels(res)
+        res = _parse_characteristic_levels(res)
 
     return res
 
 
-def parse_characteristic_levels(df):
+def _parse_characteristic_levels(df):
     """
     Take a parsed result of Utide and calculate
     characteristic tide levels from it.

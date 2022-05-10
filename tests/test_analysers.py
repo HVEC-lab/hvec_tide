@@ -13,10 +13,9 @@ import os
 # Company packages
 import hvec_tide.analysers as tide
 
-df = pd.read_excel(r'./tests/data_sample.xlsx')
-
 
 def test_tide_and_setup():
+    df = pd.read_excel(r'./tests/data_sample.xlsx')
     time = df['datetime']
     h = df['h']
 
@@ -25,5 +24,6 @@ def test_tide_and_setup():
 
 
 def test_analyse_long_series():
+    df = pd.read_excel(r'./tests/data_sample.xlsx')
     df, constit = tide.analyse_long_series(df, lat = 52)
     return

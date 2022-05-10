@@ -54,7 +54,7 @@ def test_parse_characteristic_levels():
         columns = ['z0', 'M2_ampl', 'S2_ampl'],
         data = [[0.05, 0.79, 0.02]])
 
-    df = pr.parse_characteristic_levels(df)
+    df = pr._parse_characteristic_levels(df)
     assert (
         math.isclose(df['MLWS'], -0.76) and
         math.isclose(df['MLWN'], -0.72) and
