@@ -15,3 +15,6 @@ https://github.com/wesleybowman/UTide
 """
 from .admin import __author__, __author_email__, __version__
 
+from .analysers import tide_and_setup, analyse_long_series
+
+from .parsers import parse_utide
