@@ -154,6 +154,7 @@ def analyse_long_series(
     col_h = 'h',
     col_loc = 'naam',
     delta_T = 'Y',
+    create_time_series = True,
     *args, **kwargs):
     """
     Takes a dataframe with at least:
@@ -193,11 +194,12 @@ def analyse_long_series(
         pd.Grouper(freq = delta_T, key = col_datetime),
         pd.Grouper(col_loc)])
 
-    df = gr.progress_apply(
-        lambda gr: _timeseries_segment(
-            gr, col_datetime, col_h, **kwargs
-        )
-    )
+    if create_time_series:
+        df = gr.progress_apply(
+            lambda gr: _timeseries_segment(
+                gr, col_datetime, col_h, **kwargs
+                )
+            )
 
     constit = gr.progress_apply(
         lambda gr: _constit_segment(gr, col_datetime, col_h, **kwargs)
