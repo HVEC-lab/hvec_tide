@@ -38,5 +38,10 @@ setup(
                       'utide',
                       'tqdm',
                       'datetime'],
-    packages=find_packages(exclude=['development', '__pycache__']),
+    packages=find_packages(
+        exclude=[
+            'development',
+            '__pycache__',
+            'hvec_tide.egg-info'
+            ]),
 )
