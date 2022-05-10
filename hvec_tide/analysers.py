@@ -194,15 +194,16 @@ def analyse_long_series(
         pd.Grouper(freq = delta_T, key = col_datetime),
         pd.Grouper(col_loc)])
 
+    constit = gr.progress_apply(
+        lambda gr: _constit_segment(gr, col_datetime, col_h, **kwargs)
+    )
+
     if create_time_series:
         df = gr.progress_apply(
             lambda gr: _timeseries_segment(
                 gr, col_datetime, col_h, **kwargs
                 )
             )
-
-    constit = gr.progress_apply(
-        lambda gr: _constit_segment(gr, col_datetime, col_h, **kwargs)
-    )
-
-    return df, constit
+        return df, constit
+    else:
+        return constit
