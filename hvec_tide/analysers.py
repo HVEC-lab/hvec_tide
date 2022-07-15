@@ -28,15 +28,14 @@ logging.basicConfig(
 )
 
 
-def run_utide_solve(t, h, verbose, meth_N = 'Bence', **kwargs):
+def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     """
     Apply data quality control and error checking
     before and after running ut.solve
     """
     try:
         sol = ut.solve(
-            t, h, 
-            verbose = verbose,
+            t, h,
             **kwargs
         )
     except:
@@ -76,7 +75,7 @@ def _create_tepoch(time):
 
 
 def tide_and_setup(
-    time, h, sol = 'none', verbose = False, 
+    time, h, sol = 'none', 
     method = 'Bence', **kwargs):
     """
     Take a time series of water levels and return the wind effect,
@@ -115,12 +114,10 @@ def tide_and_setup(
 
     # Run harmonic analysis, if not provided
     if sol == 'none':
-        if verbose:
-            print('No Utide result provided. Running Utide')        
+        print('No Utide result provided. Running Utide')        
         
         sol = run_utide_solve(
-            t, h, method = method, 
-            verbose = verbose,
+            t, h, method = method,
             **kwargs
         )
     
@@ -128,7 +125,7 @@ def tide_and_setup(
         return
     
     # Calculate astronomic water level
-    h_astr = ut.reconstruct(t, sol, verbose = verbose).h
+    h_astr = ut.reconstruct(t, sol).h
 
     # Calculate wind effect
     s = np.array(h - h_astr)
@@ -163,7 +160,7 @@ def _timeseries_segment(
 
     # Create utide bunch object
     sol = run_utide_solve(
-        t, df[col_h], verbose = False, **kwargs
+        t, df[col_h], **kwargs
     )
 
     if sol == 'Utide failed':
@@ -198,7 +195,7 @@ def constit_segment(
 
     # Create utide bunch object
     sol = run_utide_solve(
-        t, df[col_h], verbose = False, **kwargs
+        t, df[col_h], **kwargs
     )
     if sol == 'Utide failed':
         return
