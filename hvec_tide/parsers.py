@@ -47,6 +47,12 @@ def parse_utide(
     names = np.hstack([names, 'z0'])
     data = np.hstack([data, sol.mean])
 
+    names = np.hstack([names, 'zmean'])
+    data = np.hstack([data, sol.zmean])
+
+    names = np.hstack([names, 'count'])
+    data = np.hstack([data, sol.count])
+
     names = np.hstack([names, sol.name + '_ampl'])
     data = np.hstack([data, sol.A])
 
@@ -69,6 +75,10 @@ def parse_utide(
     if ('g_ci' in sol.keys()) and (include_phase):
         names = np.hstack([names, sol.name + '_g_ci'])
         data = np.hstack([data, sol.g_ci])
+
+    if('Rsq_adj' in sol.keys()):
+        names = np.hstack([names, 'Rsq_adj'])
+        data = np.hstack([data, sol.Rsq_adj])
 
     if include_freq:
         names = np.hstack([names, sol.name + '_frq'])
@@ -107,10 +117,12 @@ def _parse_characteristic_levels(df):
     --------
     NA
     """
-    
-    df['MHWS'] = df['z0'] + df['M2_ampl'] + df['S2_ampl']
-    df['MLWS'] = df['z0'] - df['M2_ampl'] - df['S2_ampl']
-    df['MHWN'] = df['z0'] + df['M2_ampl'] - df['S2_ampl']
-    df['MLWN'] = df['z0'] - df['M2_ampl'] + df['S2_ampl']
+    try:
+        df['MHWS'] = df['z0'] + df['M2_ampl'] + df['S2_ampl']
+        df['MLWS'] = df['z0'] - df['M2_ampl'] - df['S2_ampl']
+        df['MHWN'] = df['z0'] + df['M2_ampl'] - df['S2_ampl']
+        df['MLWN'] = df['z0'] - df['M2_ampl'] + df['S2_ampl']
+    except KeyError:
+        return
 
     return df

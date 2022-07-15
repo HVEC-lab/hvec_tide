@@ -9,12 +9,14 @@ import utide as ut
 import numpy as np
 import datetime as dt
 import pandas as pd
+import copy as cp
 from tqdm import tqdm
 import logging
 
 
 # Company packages
-import hvec_tide.parsers as pr
+import hvec_tide as tide
+import hvec_stat.gof as gof
 
 
 tqdm.pandas()
@@ -26,7 +28,7 @@ logging.basicConfig(
 )
 
 
-def run_utide_solve(t, h, verbose, **kwargs):
+def run_utide_solve(t, h, verbose, meth_N = 'Bence', **kwargs):
     """
     Apply data quality control and error checking
     before and after running ut.solve
@@ -41,7 +43,22 @@ def run_utide_solve(t, h, verbose, **kwargs):
         logging.warning(
             'Utide solve did not run succesfully'
         )
-        return
+        sol = 'Utide failed'
+        return sol
+
+    sol.zmean = h.mean()
+    sol.count = h.count()
+
+    # Generate statistical info
+    hmodel = ut.reconstruct(t, sol).h
+    k = len(sol.A) * 2 + 1  # Number of parameters used
+    Rsq_adj = gof.Rsq_adj(
+        ydata = h,
+        ymodel = hmodel,
+        k = k,
+        method = meth_N
+        )
+    sol.Rsq_adj = Rsq_adj
        
     return sol
 
@@ -58,7 +75,9 @@ def _create_tepoch(time):
     return tepoch
 
 
-def tide_and_setup(time, h, sol = 'none', verbose = False, **kwargs):
+def tide_and_setup(
+    time, h, sol = 'none', verbose = False, 
+    method = 'Bence', **kwargs):
     """
     Take a time series of water levels and return the wind effect,
     defined as the difference between observed and calculated (harmonic)
@@ -100,9 +119,13 @@ def tide_and_setup(time, h, sol = 'none', verbose = False, **kwargs):
             print('No Utide result provided. Running Utide')        
         
         sol = run_utide_solve(
-            t, h, verbose = verbose,
+            t, h, method = method, 
+            verbose = verbose,
             **kwargs
         )
+    
+    if sol == 'Utide failed':
+        return
     
     # Calculate astronomic water level
     h_astr = ut.reconstruct(t, sol, verbose = verbose).h
@@ -114,6 +137,8 @@ def tide_and_setup(time, h, sol = 'none', verbose = False, **kwargs):
     s_mean = s.mean()
     s_min = s.min()
     s_max = s.max()
+
+    # Get goodness of fit
 
     return h_astr, s, s_min, s_mean, s_max
 
@@ -140,6 +165,9 @@ def _timeseries_segment(
     sol = run_utide_solve(
         t, df[col_h], verbose = False, **kwargs
     )
+
+    if sol == 'Utide failed':
+        return
  
     h_astr, s, s_min, s_mean, s_max = tide_and_setup(
         df[col_datetime], df[col_h], sol = sol, **kwargs
@@ -150,10 +178,10 @@ def _timeseries_segment(
     return df
 
 
-def _constit_segment(
+def constit_segment(
     df,
     col_datetime,
-    col_h,
+    col_h, include_phase,
     **kwargs
     ):    
     """
@@ -172,8 +200,10 @@ def _constit_segment(
     sol = run_utide_solve(
         t, df[col_h], verbose = False, **kwargs
     )
+    if sol == 'Utide failed':
+        return
 
-    constit = pr.parse_utide(sol)
+    constit = tide.parse_utide(sol, include_phase=include_phase)
     return constit
 
 
@@ -184,6 +214,7 @@ def analyse_long_series(
     col_loc = 'naam',
     delta_T = 'Y',
     create_time_series = True,
+    include_phase = True,
     *args, **kwargs):
     """
     Takes a dataframe with at least:
@@ -218,21 +249,30 @@ def analyse_long_series(
     
     Pugh, D. and P. Woodworth - Sea level science;
         Cambridge University Press, 2014
-    """   
+    """
+
     gr = df.groupby([
         pd.Grouper(freq = delta_T, key = col_datetime),
         pd.Grouper(col_loc)])
-
+        
     constit = gr.progress_apply(
-        lambda gr: _constit_segment(gr, col_datetime, col_h, **kwargs)
-    )
+        lambda gr: constit_segment(
+            gr, col_datetime, col_h, 
+            include_phase = include_phase, **kwargs)
+     )
 
     if create_time_series:
-        df = gr.progress_apply(
+        res = gr.progress_apply(
             lambda gr: _timeseries_segment(
                 gr, col_datetime, col_h, **kwargs
                 )
             )
-        return df, constit
+
+        # Grouping used to analyse the tide per period. Once
+        # the tide has been reconstructed, the index resulting
+        # from grouping can be dropped.
+        res.reset_index(drop = True, inplace = True)
+
+        return res, constit
     else:
         return constit

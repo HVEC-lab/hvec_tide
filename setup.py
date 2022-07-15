@@ -13,36 +13,33 @@ setup(
     version = admin['__version__'],
     author = admin['__author__'],
     author_email = admin['__author_email__'],
-    description = 'Python package with convenience tools for utide',
+    description = 'Python package boosting conultancy work '
+                'with Python, sqlite and excel.',
     long_description=long_description,
-    url='https://github.com/hvec-lab',
-    project_urls={
-        'Source': 'https://github.com/hvec-lab/hvec_tide'
+#    url='https://github.com/pastas/pastas',
+#    project_urls={
+#        'Source': 'https://github.com/pastas/pastas',
 #        'Documentation': 'http://pastas.readthedocs.io/en/latest/',
 #        'Tracker': 'https://github.com/pastas/pastas/issues',
 #        'Help': 'https://github.com/pastas/pastas/discussions'
-    },
-    license = 'MIT',
+#    },
+    license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
         'Intended Audience :: Other Audience',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.10'
+        'Programming Language :: SQL',
         'Topic :: Scientific/Engineering'
     ],
     platforms='Windows',
     install_requires=['numpy>=1.17',
+                      'matplotlib>=3.1',
                       'pandas>=1.1',
                       'scipy>=1.3',
                       'utide',
-                      'tqdm',
                       'datetime',
-                      'logging'],
-    packages=find_packages(
-        exclude=[
-            'development',
-            '__pycache__',
-            'hvec_tide.egg-info'
-            ]),
+                      'tqdm'],
+    packages=find_packages(exclude=[]),
 )

@@ -7,11 +7,11 @@ Created by HVEC, May 2022
 # Public packages
 import pytest as pyt
 import pandas as pd
-import utide as ut
+#import utide as ut
 import math
 
 # Company packages
-import hvec_tide.parsers as pr
+import hvec_tide as tide
 
 
 df = pd.read_excel(r'./tests/data_sample.xlsx')
@@ -37,15 +37,16 @@ def test_parse_utide(
     t = df['tepoch']
     h = df['h']
     
-    coef = ut.solve(
+    coef = tide.run_utide_solve(
         t, h,
+        verbose = True,
         lat = lat,
         trend = trend,
         conf_int = conf_int,
         method = method,
         nodal = nodal)
     
-    result = pr.parse_utide(coef, include_freq)
+    result = tide.parse_utide(coef, include_freq)
     assert len(result) > 0
 
 
@@ -54,7 +55,7 @@ def test_parse_characteristic_levels():
         columns = ['z0', 'M2_ampl', 'S2_ampl'],
         data = [[0.05, 0.79, 0.02]])
 
-    df = pr._parse_characteristic_levels(df)
+    df = tide.parsers._parse_characteristic_levels(df)
     assert (
         math.isclose(df['MLWS'], -0.76) and
         math.isclose(df['MLWN'], -0.72) and
