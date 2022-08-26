@@ -35,7 +35,7 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     """
     try:
         sol = ut.solve(
-            t, h,
+            t, h, verbose = False,
             **kwargs
         )
     except:
@@ -49,8 +49,10 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     sol.count = h.count()
 
     # Generate statistical info
-    hmodel = ut.reconstruct(t, sol).h
+    hmodel = ut.reconstruct(t, sol, verbose = False).h
     k = len(sol.A) * 2 + 1  # Number of parameters used
+    if kwargs['trend']: k+=1
+
     Rsq_adj = gof.Rsq_adj(
         ydata = h,
         ymodel = hmodel,
@@ -76,7 +78,7 @@ def _create_tepoch(time):
 
 def tide_and_setup(
     time, h, sol = 'none', 
-    method = 'Bence', **kwargs):
+    meth_N = 'Bence', **kwargs):
     """
     Take a time series of water levels and return the wind effect,
     defined as the difference between observed and calculated (harmonic)
@@ -117,7 +119,7 @@ def tide_and_setup(
         print('No Utide result provided. Running Utide')        
         
         sol = run_utide_solve(
-            t, h, method = method,
+            t, h, method = meth_N, verbose = False,
             **kwargs
         )
     
@@ -125,7 +127,7 @@ def tide_and_setup(
         return
     
     # Calculate astronomic water level
-    h_astr = ut.reconstruct(t, sol).h
+    h_astr = ut.reconstruct(t, sol, verbose = False).h
 
     # Calculate wind effect
     s = np.array(h - h_astr)
@@ -179,6 +181,8 @@ def constit_segment(
     df,
     col_datetime,
     col_h, include_phase,
+    include_char_levels = False,
+    include_freq = False,
     **kwargs
     ):    
     """
@@ -200,7 +204,10 @@ def constit_segment(
     if sol == 'Utide failed':
         return
 
-    constit = tide.parse_utide(sol, include_phase=include_phase)
+    constit = tide.parse_utide(
+        sol, include_phase=include_phase,
+        include_freq = include_freq,
+        include_char_levels = include_char_levels)
     return constit
 
 

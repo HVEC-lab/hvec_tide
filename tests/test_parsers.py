@@ -39,7 +39,6 @@ def test_parse_utide(
     
     coef = tide.run_utide_solve(
         t, h,
-        verbose = True,
         lat = lat,
         trend = trend,
         conf_int = conf_int,
