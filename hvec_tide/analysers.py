@@ -137,8 +137,6 @@ def tide_and_setup(
     s_min = s.min()
     s_max = s.max()
 
-    # Get goodness of fit
-
     return h_astr, s, s_min, s_mean, s_max
 
 
