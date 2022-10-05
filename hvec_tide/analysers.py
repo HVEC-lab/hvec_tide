@@ -15,8 +15,8 @@ import logging
 
 
 # Company packages
-import hvec_tide as tide
-import hvec_stat.gof as gof
+import hvec_stat.goodness_of_fit as gof
+import hvec_tide.parsers as parse
 
 
 tqdm.pandas()
@@ -51,7 +51,8 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     # Generate statistical info
     hmodel = ut.reconstruct(t, sol, verbose = False).h
     k = len(sol.A) * 2 + 1  # Number of parameters used
-    if kwargs['trend']: k+=1
+    if ('trend' in kwargs.keys()):
+        if kwargs['trend']: k+=1
 
     Rsq_adj = gof.Rsq_adj(
         ydata = h,
@@ -202,7 +203,7 @@ def constit_segment(
     if sol == 'Utide failed':
         return
 
-    constit = tide.parse_utide(
+    constit = parse.parse_utide(
         sol, include_phase=include_phase,
         include_freq = include_freq,
         include_char_levels = include_char_levels)

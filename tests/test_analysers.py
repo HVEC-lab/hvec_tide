@@ -44,5 +44,5 @@ def test_tide_and_setup():
 
 def test_analyse_long_series():
     df = pd.read_excel(r'./tests/data_sample.xlsx')
-    df, constit = tide.analyse_long_series(df, lat = 52, include_phase = False, delta_T = 'Y')
+    df, constit = tide.analyse_long_series(df, lat = 52, trend = False, include_phase = False, delta_T = 'Y')
     return
