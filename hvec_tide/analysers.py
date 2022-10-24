@@ -19,6 +19,9 @@ import hvec_stat.goodness_of_fit as gof
 import hvec_tide.parsers as parse
 
 
+
+
+
 tqdm.pandas()
 logging.basicConfig(
     filename = 'hvec_tide.log',
@@ -28,21 +31,33 @@ logging.basicConfig(
 )
 
 
+def _create_tepoch(time):
+    """
+    Ensure consistency in calculating tepoch by
+    providing a single function for it.
+    """
+    tepoch = (
+        (time - dt.datetime.utcfromtimestamp(0)).
+        dt.total_seconds()/86400
+        )
+    return tepoch
+
+
 def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     """
     Apply data quality control and error checking
     before and after running ut.solve
     """
+    if isinstance(t, datetime):
+        t = _create_tepoch(t)
     try:
         sol = ut.solve(
             t, h, verbose = False,
             **kwargs
         )
-    except:
-        logging.warning(
-            'Utide solve did not run succesfully'
-        )
-        sol = 'Utide failed'
+    except Exception as e:
+        logging.warning(e)
+        sol = e
         return sol
 
     sol.zmean = h.mean()
@@ -63,18 +78,6 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     sol.Rsq_adj = Rsq_adj
        
     return sol
-
-
-def _create_tepoch(time):
-    """
-    Ensure consistency in calculating tepoch by
-    providing a single function for it.
-    """
-    tepoch = (
-        (time - dt.datetime.utcfromtimestamp(0)).
-        dt.total_seconds()/86400
-        )
-    return tepoch
 
 
 def tide_and_setup(
@@ -179,7 +182,7 @@ def _timeseries_segment(
 def constit_segment(
     df,
     col_datetime,
-    col_h, include_phase,
+    col_h, include_phase = False,
     include_char_levels = False,
     include_freq = False,
     **kwargs
