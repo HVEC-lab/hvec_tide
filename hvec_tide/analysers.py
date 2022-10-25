@@ -13,22 +13,11 @@ import copy as cp
 from tqdm import tqdm
 import logging
 
-
 # Company packages
 import hvec_stat.goodness_of_fit as gof
 import hvec_tide.parsers as parse
 
-
-
-
-
 tqdm.pandas()
-logging.basicConfig(
-    filename = 'hvec_tide.log',
-    level = logging.INFO,
-    encoding = 'utf-8',
-    filemode = 'w'
-)
 
 
 def _create_tepoch(time):
@@ -48,7 +37,7 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     Apply data quality control and error checking
     before and after running ut.solve
     """
-    if isinstance(t, datetime):
+    if t.dtype == '<M8[ns]':
         t = _create_tepoch(t)
     try:
         sol = ut.solve(
@@ -57,7 +46,7 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
         )
     except Exception as e:
         logging.warning(e)
-        sol = e
+        sol = str(e)
         return sol
 
     sol.zmean = h.mean()
@@ -76,7 +65,12 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
         method = meth_N
         )
     sol.Rsq_adj = Rsq_adj
-       
+
+    # Add wind effects to result
+    s = h - hmodel
+    sol.smean = s.mean()
+    sol.smin = s.min()
+    sol.smax = s.max()
     return sol
 
 
@@ -167,7 +161,7 @@ def _timeseries_segment(
         t, df[col_h], **kwargs
     )
 
-    if sol == 'Utide failed':
+    if isinstance(sol, str):
         return
  
     h_astr, s, s_min, s_mean, s_max = tide_and_setup(
@@ -182,7 +176,7 @@ def _timeseries_segment(
 def constit_segment(
     df,
     col_datetime,
-    col_h, include_phase = False,
+    col_h, include_windeffect = False, include_phase = False,
     include_char_levels = False,
     include_freq = False,
     **kwargs
@@ -203,7 +197,7 @@ def constit_segment(
     sol = run_utide_solve(
         t, df[col_h], **kwargs
     )
-    if sol == 'Utide failed':
+    if isinstance(sol, str):
         return
 
     constit = parse.parse_utide(
@@ -260,7 +254,7 @@ def analyse_long_series(
     gr = df.groupby([
         pd.Grouper(freq = delta_T, key = col_datetime),
         pd.Grouper(col_loc)])
-        
+
     constit = gr.progress_apply(
         lambda gr: constit_segment(
             gr, col_datetime, col_h, 

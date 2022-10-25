@@ -8,9 +8,44 @@ Created by HVEC, May 2022
 import pandas as pd
 import numpy as np
 
+from . import analysers as tide
+
+
+def _parse_characteristic_levels(df):
+    """
+    Take a parsed result of Utide and calculate
+    characteristic tide levels from it.
+
+    Parameters
+    -------
+    df: dataframe in the format provided by parse_utide
+
+    Returns
+    -------
+    df, augmented with the following columns:
+        'MLWS', 'MLWN', 'MHWN' and 'MHWS'
+
+    Issues
+    --------
+    None
+ 
+    References
+    --------
+    NA
+    """
+    try:
+        df['MHWS'] = df['z0'] + df['M2_ampl'] + df['S2_ampl']
+        df['MLWS'] = df['z0'] - df['M2_ampl'] - df['S2_ampl']
+        df['MHWN'] = df['z0'] + df['M2_ampl'] - df['S2_ampl']
+        df['MLWN'] = df['z0'] - df['M2_ampl'] + df['S2_ampl']
+    except KeyError:
+        return
+
+    return df
+
 
 def parse_utide(
-    sol, include_char_levels = True,
+    sol, include_char_levels = True, include_windeffect = True,
     include_phase = True,
     include_freq = False
     ): 
@@ -18,7 +53,7 @@ def parse_utide(
     Parse the result of a harmonic analysis to a dataframe
     with all results in a single row and the variable names
     as columns.
-    
+
     UTide can be run with several options. Therefore some
     parsing is conditional.
 
@@ -35,7 +70,7 @@ def parse_utide(
     Issues
     --------
     None
- 
+
     References
     --------
     NA
@@ -56,6 +91,15 @@ def parse_utide(
     names = np.hstack([names, sol.name + '_ampl'])
     data = np.hstack([data, sol.A])
 
+    names = np.hstack([names, 'smean'])
+    data = np.hstack([data, sol.smean])
+
+    names = np.hstack([names, 'smin'])
+    data = np.hstack([data, sol.smin])
+
+    names = np.hstack([names, 'smax'])
+    data = np.hstack([data, sol.smax])
+    
     if include_phase:
         names = np.hstack([names, sol.name + '_phase'])
         data = np.hstack([data, sol.g])
@@ -93,36 +137,3 @@ def parse_utide(
         res = _parse_characteristic_levels(res)
 
     return res
-
-
-def _parse_characteristic_levels(df):
-    """
-    Take a parsed result of Utide and calculate
-    characteristic tide levels from it.
-
-    Parameters
-    -------
-    df: dataframe in the format provided by parse_utide
-
-    Returns
-    -------
-    df, augmented with the following columns:
-        'MLWS', 'MLWN', 'MHWN' and 'MHWS'
-
-    Issues
-    --------
-    None
- 
-    References
-    --------
-    NA
-    """
-    try:
-        df['MHWS'] = df['z0'] + df['M2_ampl'] + df['S2_ampl']
-        df['MLWS'] = df['z0'] - df['M2_ampl'] - df['S2_ampl']
-        df['MHWN'] = df['z0'] + df['M2_ampl'] - df['S2_ampl']
-        df['MLWN'] = df['z0'] - df['M2_ampl'] + df['S2_ampl']
-    except KeyError:
-        return
-
-    return df
