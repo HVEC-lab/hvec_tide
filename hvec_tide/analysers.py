@@ -5,13 +5,12 @@ Created by HVEC, May 2022
 """
 
 # Public packages
-import utide as ut
-import numpy as np
-import datetime as dt
-import pandas as pd
-import copy as cp
-from tqdm import tqdm
 import logging
+import datetime as dt
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+import utide as ut
 
 # Company packages
 import hvec_stat.goodness_of_fit as gof
@@ -54,17 +53,15 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
 
     # Generate statistical info
     hmodel = ut.reconstruct(t, sol, verbose = False).h
+    
     k = len(sol.A) * 2 + 1  # Number of parameters used
-    if ('trend' in kwargs.keys()):
-        if kwargs['trend']: k+=1
+    if 'trend' in kwargs.keys():
+        if kwargs['trend']:
+            k+=1
 
-    Rsq_adj = gof.Rsq_adj(
-        ydata = h,
-        ymodel = hmodel,
-        k = k,
-        method = meth_N
-        )
+    Rsq_adj = gof.Rsq_adj(ydata = h, ymodel = hmodel, k = k, method = meth_N)
     sol.Rsq_adj = Rsq_adj
+    sol.correlation_method = meth_N
 
     # Add wind effects to result
     s = h - hmodel
@@ -220,10 +217,10 @@ def analyse_long_series(
     Takes a dataframe with at least:
         - datetime field
         - water level field
-    
+
     Analyse it seperating the data according to time with
     interval specified on input.
-    
+
     Parameters
     -------
     df: dataframe with water level observations
@@ -241,15 +238,16 @@ def analyse_long_series(
     Issues
     --------
     None
- 
+
     References
     --------
-    Codiga, Daniel. (2011). Unified tidal analysis and 
+    Codiga, Daniel. (2011). Unified tidal analysis and
         prediction using the UTide Matlab functions. 10.13140/RG.2.1.3761.2008
-    
+
     Pugh, D. and P. Woodworth - Sea level science;
         Cambridge University Press, 2014
     """
+    logging.info('Running tide analysis of long series')
 
     gr = df.groupby([
         pd.Grouper(freq = delta_T, key = col_datetime),
