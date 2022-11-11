@@ -28,7 +28,7 @@ df = pd.read_excel(r'./tests/data_sample.xlsx')
         (52, False, 'none', 'ols', False, True),
     ]
 )
-#TODO: solve persistent error in case of include_freq = True
+#TODO: Utide version 0.3.0 causes errors. Returned to 0.2.6
 def test_parse_utide(
     lat, trend, conf_int, method, nodal, incl_freq 
 ):
