@@ -35,11 +35,9 @@ setup(
     ],
     platforms='Windows',
     install_requires=['numpy>=1.17',
-                      'matplotlib>=3.1',
                       'pandas>=1.1',
-                      'scipy>=1.3',
-                      'utide',
                       'datetime',
-                      'tqdm'],
+                      'tqdm',
+                      'utide<=0.2.6'],
     packages=find_packages(exclude=[]),
 )

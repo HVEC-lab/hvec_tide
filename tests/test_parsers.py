@@ -18,9 +18,9 @@ df = pd.read_excel(r'./tests/data_sample.xlsx')
 
 
 @pyt.mark.parametrize(
-    "lat, trend, conf_int, method, nodal, include_freq",
+    "lat, trend, conf_int, method, nodal, incl_freq",
     [   (52, False, 'none', 'ols', False, False),
-        (52, False, 'linear', 'ols', False, False),
+        (52, False, 'linear', 'ols', False, True),
         (52, False, 'MC', 'ols', False, False),
         (52, True, 'none', 'ols', False, False),
         (52, False, 'none', 'robust', False, False),
@@ -28,8 +28,9 @@ df = pd.read_excel(r'./tests/data_sample.xlsx')
         (52, False, 'none', 'ols', False, True),
     ]
 )
+#TODO: solve persistent error in case of include_freq = True
 def test_parse_utide(
-    lat, trend, conf_int, method, nodal, include_freq 
+    lat, trend, conf_int, method, nodal, incl_freq 
 ):
     """
     Test parser for a number of configurations of Utide
@@ -43,9 +44,10 @@ def test_parse_utide(
         trend = trend,
         conf_int = conf_int,
         method = method,
-        nodal = nodal)
-    
-    result = tide.parse_utide(coef, include_freq)
+        nodal = nodal, verbose = True
+    )
+
+    result = tide.parse_utide(coef, incl_freq)
     assert len(result) > 0
 
 

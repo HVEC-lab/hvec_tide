@@ -1,0 +1,11 @@
+hvec_tide/__pycache__/__init__.cpython-310.pyc
+hvec_tide/__pycache__/admin.cpython-310.pyc
+hvec_tide/__pycache__/analysers.cpython-310.pyc
+hvec_tide/__pycache__/parsers.cpython-310.pyc
+hvec_tide.egg-info/dependency_links.txt
+hvec_tide.egg-info/PKG-INFO
+hvec_tide.egg-info/requires.txt
+hvec_tide.egg-info/SOURCES.txt
+hvec_tide.egg-info/top_level.txt
+tests/__pycache__/test_analysers.cpython-310-pytest-7.2.0.pyc
+tests/__pycache__/test_parsers.cpython-310-pytest-7.2.0.pyc
