@@ -1,4 +1,6 @@
 numpy
 pandas
+openpyxl
 tqdm
-utide
+utide<0.3.0
+hvec_stat @ git+https://github.com/hvec-lab/hvec_stat
