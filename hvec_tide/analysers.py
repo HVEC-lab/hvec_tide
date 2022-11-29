@@ -50,7 +50,7 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
 
     # Generate statistical info
     hmodel = ut.reconstruct(t, sol, verbose = False).h
-    
+
     k = len(sol.A) * 2 + 1  # Number of parameters used
     if 'trend' in kwargs.keys():
         if kwargs['trend']:
