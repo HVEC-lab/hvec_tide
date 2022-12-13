@@ -9,3 +9,5 @@ hvec_tide.egg-info/SOURCES.txt
 hvec_tide.egg-info/top_level.txt
 tests/__pycache__/test_analysers.cpython-310-pytest-7.2.0.pyc
 tests/__pycache__/test_parsers.cpython-310-pytest-7.2.0.pyc
+.vscode/launch.json
+development/__pycache__/direct_test.cpython-310-pytest-7.2.0.pyc

@@ -9,6 +9,7 @@ import pytest as pyt
 import pandas as pd
 import utide as ut
 import os
+from datetime import datetime as dt
 
 # Company packages
 import hvec_tide as tide
@@ -44,5 +45,10 @@ def test_tide_and_setup():
 
 def test_analyse_long_series():
     df = pd.read_excel(r'./tests/data_sample.xlsx')
-    df, constit = tide.analyse_long_series(df, lat = 52, trend = False, include_phase = False, delta_T = 'Y')
+
+    start = dt.now()
+    df, constit = tide.analyse_long_series(
+        df, lat = 52, trend = False, include_phase = False, delta_T = 'Y', verbose = False)
+    end = dt.now()
+    print(end - start)
     return
