@@ -9,7 +9,6 @@ import logging
 import datetime as dt
 import numpy as np
 import pandas as pd
-from pandarallel import pandarallel as pdl
 from tqdm import tqdm
 import utide as ut
 
@@ -18,8 +17,6 @@ import hvec_stat.goodness_of_fit as gof
 import hvec_tide.parsers as parse
 
 tqdm.pandas()
-pdl.initialize(progress_bar = True)
-
 
 def _create_tepoch(time):
     """
@@ -259,7 +256,7 @@ def analyse_long_series(
      )
 
     if create_time_series:
-        res = gr.parallel_apply(
+        res = gr.progress_apply(
             lambda gr: _timeseries_segment(
                 gr, col_datetime, col_h, **kwargs
                 )
