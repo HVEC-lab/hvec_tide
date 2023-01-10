@@ -17,7 +17,7 @@ import hvec_tide as tide
 
 def test_run_utide_solve():
     df = pd.read_excel(r'./tests/data_sample.xlsx')
-    t = df['tepoch']
+    t = df['datetime']
     h = df['h']
     sol = tide.run_utide_solve(t, h, lat = 52, verbose = False)
     return
