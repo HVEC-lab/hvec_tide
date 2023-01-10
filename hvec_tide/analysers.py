@@ -6,7 +6,6 @@ Created by HVEC, May 2022
 
 # Public packages
 import logging
-import datetime as dt
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -18,25 +17,12 @@ import hvec_tide.parsers as parse
 
 tqdm.pandas()
 
-def _create_tepoch(time):
-    """
-    Ensure consistency in calculating tepoch by
-    providing a single function for it.
-    """
-    tepoch = (
-        (time - dt.datetime.utcfromtimestamp(0)).
-        dt.total_seconds()/86400
-        )
-    return tepoch
-
 
 def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     """
     Apply data quality control and error checking
     before and after running ut.solve
     """
-    if t.dtype == '<M8[ns]':
-        t = _create_tepoch(t)
     try:
         sol = ut.solve(t, h, **kwargs)
     except Exception as e:
@@ -103,7 +89,7 @@ def tide_and_setup(
     """
 
     # Create time with respect to epoch
-    t = _create_tepoch(time)
+    t = time
 
     # Run harmonic analysis, if not provided
     if sol == 'none':
@@ -147,7 +133,7 @@ def _timeseries_segment(
     """
 
     # First create vector of tepoch
-    t = _create_tepoch(df[col_datetime])
+    t = df[col_datetime]
 
     # Create utide bunch object
     sol = run_utide_solve(
@@ -157,7 +143,7 @@ def _timeseries_segment(
     if isinstance(sol, str):
         return
  
-    h_astr, s, s_min, s_mean, s_max = tide_and_setup(
+    h_astr, s, _, _, _ = tide_and_setup(
         df[col_datetime], df[col_h], sol = sol, **kwargs
     )
 
@@ -169,11 +155,11 @@ def _timeseries_segment(
 def constit_segment(
     df,
     col_datetime,
-    col_h, include_windeffect = False, include_phase = False,
+    col_h, include_phase = False,
     include_char_levels = False,
     include_freq = False,
     **kwargs
-    ):    
+    ):
     """
     Run tidal analysis for a single group provided by
     function analyse_long_series and create table of
@@ -183,8 +169,7 @@ def constit_segment(
     lat should be provided!
     """
     
-    # First create vector of tepoch
-    t = _create_tepoch(df[col_datetime])
+    t = df[col_datetime]
 
     # Create utide bunch object
     sol = run_utide_solve(
@@ -207,8 +192,7 @@ def analyse_long_series(
     col_loc = 'naam',
     delta_T = 'Y',
     create_time_series = True,
-    include_phase = True,
-    *args, **kwargs):
+    include_phase = True, **kwargs):
     """
     Takes a dataframe with at least:
         - datetime field
@@ -268,5 +252,5 @@ def analyse_long_series(
         res.reset_index(drop = True, inplace = True)
 
         return res, constit
-    else:
+
         return constit

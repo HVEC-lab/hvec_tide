@@ -20,18 +20,18 @@ def test_run_utide_solve():
     t = df['datetime']
     h = df['h']
     sol = tide.run_utide_solve(t, h, lat = 52, verbose = False)
-    return
+    assert len(sol.name) > 0
 
 
 def test_constit_segment():
     df = pd.read_excel(r'./tests/data_sample.xlsx')
-    tide.constit_segment(
+    sol = tide.constit_segment(
         df,
         col_datetime = 'datetime',
         col_h = 'h', include_phase = True,
         lat = 52
-    )  
-    return
+    )
+    assert len(sol.columns) > 0
 
 
 def test_tide_and_setup():
@@ -39,8 +39,8 @@ def test_tide_and_setup():
     time = df['datetime']
     h = df['h']
 
-    tide.tide_and_setup(time, h, lat = 52)
-    return
+    sol = tide.tide_and_setup(time, h, lat = 52)
+    assert len(sol) > 0
 
 
 def test_analyse_long_series():
@@ -51,4 +51,4 @@ def test_analyse_long_series():
         df, lat = 52, trend = False, include_phase = False, delta_T = 'Y', verbose = False)
     end = dt.now()
     print(end - start)
-    return
+    assert len(constit.columns) > 0

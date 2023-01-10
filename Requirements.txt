@@ -2,5 +2,5 @@ numpy
 pandas
 openpyxl
 tqdm
-utide<0.3.0
+utide
 hvec_stat @ git+https://github.com/hvec-lab/hvec_stat

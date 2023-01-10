@@ -35,7 +35,7 @@ def test_parse_utide(
     """
     Test parser for a number of configurations of Utide
     """
-    t = df['tepoch']
+    t = df['datetime']
     h = df['h']
     
     coef = tide.run_utide_solve(
