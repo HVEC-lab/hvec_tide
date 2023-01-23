@@ -11,3 +11,9 @@ tests/__pycache__/test_analysers.cpython-310-pytest-7.2.0.pyc
 tests/__pycache__/test_parsers.cpython-310-pytest-7.2.0.pyc
 .vscode/launch.json
 development/__pycache__/direct_test.cpython-310-pytest-7.2.0.pyc
+hvec_tide/__pycache__/__init__.cpython-311.pyc
+hvec_tide/__pycache__/admin.cpython-311.pyc
+hvec_tide/__pycache__/analysers.cpython-311.pyc
+hvec_tide/__pycache__/parsers.cpython-311.pyc
+tests/__pycache__/test_analysers.cpython-311-pytest-7.2.1.pyc
+tests/__pycache__/test_parsers.cpython-311-pytest-7.2.1.pyc

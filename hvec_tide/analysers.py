@@ -18,13 +18,15 @@ import hvec_tide.parsers as parse
 tqdm.pandas()
 
 
-def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
+def run_utide_solve(t, h, meth_N = 'Bence', verbose = False, **kwargs):
     """
     Apply data quality control and error checking
-    before and after running ut.solve
+    before and after running ut.solve.
+
+    Add additional statistical output to result of Utide.
     """
     try:
-        sol = ut.solve(t, h, **kwargs)
+        sol = ut.solve(t, h, verbose = verbose, **kwargs)
     except Exception as e:
         logging.warning(e)
         sol = str(e)
@@ -34,7 +36,7 @@ def run_utide_solve(t, h, meth_N = 'Bence', **kwargs):
     sol.count = h.count()
 
     # Generate statistical info
-    hmodel = ut.reconstruct(t, sol, verbose = False).h
+    hmodel = ut.reconstruct(t, sol, verbose = verbose).h
 
     k = len(sol.A) * 2 + 1  # Number of parameters used
     if 'trend' in kwargs.keys():
@@ -191,8 +193,9 @@ def analyse_long_series(
     col_h = 'h',
     col_loc = 'naam',
     delta_T = 'Y',
-    create_time_series = True,
-    include_phase = True, **kwargs):
+    create_time_series = False,
+    include_phase = False,
+    verbose = False, **kwargs):
     """
     Takes a dataframe with at least:
         - datetime field
@@ -253,4 +256,4 @@ def analyse_long_series(
 
         return res, constit
 
-        return constit
+    return constit
