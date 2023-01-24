@@ -194,8 +194,7 @@ def analyse_long_series(
     col_loc = 'naam',
     delta_T = 'Y',
     create_time_series = False,
-    include_phase = False,
-    verbose = False, **kwargs):
+    include_phase = False, **kwargs):
     """
     Takes a dataframe with at least:
         - datetime field
@@ -242,6 +241,8 @@ def analyse_long_series(
             include_phase = include_phase, **kwargs)
      )
 
+    constit.reset_index(inplace = True)  # Turn created multi-index into columns
+
     if create_time_series:
         res = gr.progress_apply(
             lambda gr: _timeseries_segment(
@@ -256,4 +257,4 @@ def analyse_long_series(
 
         return res, constit
 
-    return constit
+    return pd.DataFrame(), constit
