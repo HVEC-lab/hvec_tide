@@ -233,7 +233,7 @@ def analyse_long_series(
 
     gr = df.groupby([
         pd.Grouper(freq = delta_T, key = col_datetime),
-        pd.Grouper(col_loc)])
+        pd.Grouper(col_loc)], group_keys = False)  # group_keys added to silence deprecation warning
 
     constit = gr.progress_apply(
         lambda gr: constit_segment(
