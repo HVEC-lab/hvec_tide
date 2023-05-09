@@ -18,6 +18,33 @@ import hvec_tide.parsers as parse
 tqdm.pandas()
 
 
+def select_constituents(df, latitude, settings, thr = 99):
+    """
+    Select constituents based on a tidal analysis of the last year in the set.
+    Take the constituents, ordered by percentage of energy (PE), and select the constituents of
+    which the summed PE reaches a specified threshold.
+    """
+    #TODO specify more methods for selecting constituents; primarily prescribed sets
+    name = df[settings['nameColumn']].unique().squeeze()
+    logging.info(f'Selecting constituents with threshold {thr} % for {name}')
+
+    time = settings['timeColumn']
+    level = settings['levelColumn']
+
+    latest_year = df[time].dt.year.max()
+    data = df.loc[df[time].dt.year == latest_year]
+
+    coef = tide.run_utide_solve(
+        data[time], data[level],
+        lat = latitude,
+        nodal = False, trend = False, verbose = False)
+
+    # Select constituent set based on summed PE threshold
+    idMx = (coef.PE.cumsum() > thr).argmax()
+    selected = coef.name[:idMx].tolist()
+    return selected
+
+
 def run_utide_solve(t, h, meth_N = 'Bence', verbose = False, **kwargs):
     """
     Apply data quality control and error checking
@@ -194,8 +221,7 @@ def analyse_long_series(
     col_loc = 'naam',
     delta_T = 'Y',
     create_time_series = False,
-    include_phase = False,
-    verbose = False, **kwargs):
+    include_phase = False, **kwargs):
     """
     Takes a dataframe with at least:
         - datetime field
@@ -234,13 +260,15 @@ def analyse_long_series(
 
     gr = df.groupby([
         pd.Grouper(freq = delta_T, key = col_datetime),
-        pd.Grouper(col_loc)])
+        pd.Grouper(col_loc)], group_keys = False)  # group_keys added to silence deprecation warning
 
     constit = gr.progress_apply(
         lambda gr: constit_segment(
             gr, col_datetime, col_h, 
             include_phase = include_phase, **kwargs)
      )
+
+    constit.reset_index(inplace = True)  # Turn created multi-index into columns
 
     if create_time_series:
         res = gr.progress_apply(
@@ -256,4 +284,4 @@ def analyse_long_series(
 
         return res, constit
 
-    return constit
+    return pd.DataFrame(), constit
