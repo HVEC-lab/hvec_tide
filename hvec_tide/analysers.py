@@ -181,7 +181,7 @@ def _timeseries_segment(
     return df
 
 
-def constit_segment(
+def _constit_segment(
     df,
     col_datetime,
     col_h, include_phase = False,
@@ -263,7 +263,7 @@ def analyse_long_series(
         pd.Grouper(col_loc)], group_keys = False)  # group_keys added to silence deprecation warning
 
     constit = gr.progress_apply(
-        lambda gr: constit_segment(
+        lambda gr: _constit_segment(
             gr, col_datetime, col_h, 
             include_phase = include_phase, **kwargs)
      )

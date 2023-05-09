@@ -25,7 +25,7 @@ def test_run_utide_solve():
 
 def test_constit_segment():
     df = pd.read_excel(r'./tests/data_sample.xlsx')
-    sol = tide.constit_segment(
+    sol = tide.analysers._constit_segment(
         df,
         col_datetime = 'datetime',
         col_h = 'h', include_phase = True,
