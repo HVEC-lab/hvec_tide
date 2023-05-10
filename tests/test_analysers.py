@@ -15,6 +15,20 @@ from datetime import datetime as dt
 import hvec_tide as tide
 
 
+def test_select_constituents():
+    df = pd.read_excel(r'./tests/data_sample.xlsx')
+
+    settings = {
+        'nameColumn': 'naam'
+        , 'timeColumn': 'datetime'
+        , 'levelColumn': 'h'
+    }
+    coef = tide.analysers.select_constituents(df, latitude = 52, settings = settings)
+    assert len(coef) > 2
+    assert 'M2' in coef
+    assert 'S2' in coef
+
+
 def test_run_utide_solve():
     df = pd.read_excel(r'./tests/data_sample.xlsx')
     t = df['datetime']

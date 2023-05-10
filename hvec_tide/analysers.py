@@ -42,11 +42,8 @@ def select_constituents(df, latitude, settings, thr = 99):
     time = settings['timeColumn']
     level = settings['levelColumn']
 
-    latest_year = df[time].dt.year.max()
-    data = df.loc[df[time].dt.year == latest_year]
-
     coef = tide.run_utide_solve(
-        data[time], data[level],
+        df[time], df[level],
         lat = latitude,
         nodal = False, trend = False, verbose = False)
 
