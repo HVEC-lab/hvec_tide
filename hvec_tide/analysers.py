@@ -12,8 +12,9 @@ from tqdm import tqdm
 import utide as ut
 
 # Company packages
-import hvec_stat.goodness_of_fit as gof
-import hvec_tide.parsers as parse
+from hvec_stat import goodness_of_fit as gof
+from hvec_tide import parsers as parse
+from hvec_tide import analysers as tide
 
 tqdm.pandas()
 
