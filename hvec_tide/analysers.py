@@ -23,6 +23,16 @@ def select_constituents(df, latitude, settings, thr = 99):
     Select constituents based on a tidal analysis of the last year in the set.
     Take the constituents, ordered by percentage of energy (PE), and select the constituents of
     which the summed PE reaches a specified threshold.
+
+    Args:
+        df, dataframe with observations
+        latitude, float. Required argument of UTide
+        settings, dictionary with the following fields:
+            nameColumn, timeColumn and levelColumn; all string. Specifying the names
+            of the name, time and level columns respectively
+    
+    Returns:
+        selected constituents as a list of strings
     """
     #TODO specify more methods for selecting constituents; primarily prescribed sets
     name = df[settings['nameColumn']].unique().squeeze()
