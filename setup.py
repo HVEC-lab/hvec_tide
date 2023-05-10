@@ -38,7 +38,7 @@ setup(
                       'pandas>=1.1',
                       'datetime',
                       'tqdm',
-                      'utide>=0.3.0',
+                      'utide==0.2.6',
                       'hvec_stat @ git+https://github.com/HVEC-lab/hvec_stat'],
     packages=find_packages(exclude=[]),
 )
