@@ -2,5 +2,5 @@ numpy
 pandas
 openpyxl
 tqdm
-utide==0.2.6
+utide>=0.3.0
 hvec_stat @ git+https://github.com/hvec-lab/hvec_stat
