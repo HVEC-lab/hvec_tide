@@ -41,19 +41,17 @@ def select_constituents(df, latitude, settings, thr = 99):
 
     time = settings['timeColumn']
     level = settings['levelColumn']
-    
-    try:
-        coef = tide.run_utide_solve(
-            df[time], df[level],
-            lat = latitude,
-            nodal = False, trend = False, verbose = False)
+ 
+    coef = tide.run_utide_solve(
+        df[time], df[level],
+        lat = latitude,
+        nodal = False, trend = False, verbose = False,
+        conf_int = 'none')
 
-        # Select constituent set based on summed PE threshold
-        idMx = (coef.PE.cumsum() > thr).argmax()
-        selected = coef.name[:idMx].tolist()
-        return selected
-    except:
-        return ['Error raised']
+    # Select constituent set based on summed PE threshold
+    idMx = (coef.PE.cumsum() > thr).argmax()
+    selected = coef.name[:idMx].tolist()
+    return selected
 
 
 def run_utide_solve(t, h, meth_N = 'Bence', verbose = False, **kwargs):
