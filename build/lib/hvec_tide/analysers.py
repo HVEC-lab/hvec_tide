@@ -12,8 +12,9 @@ from tqdm import tqdm
 import utide as ut
 
 # Company packages
-import hvec_stat.goodness_of_fit as gof
-import hvec_tide.parsers as parse
+from hvec_stat import goodness_of_fit as gof
+from hvec_tide import parsers as parse
+from hvec_tide import analysers as tide
 
 tqdm.pandas()
 
@@ -23,6 +24,16 @@ def select_constituents(df, latitude, settings, thr = 99):
     Select constituents based on a tidal analysis of the last year in the set.
     Take the constituents, ordered by percentage of energy (PE), and select the constituents of
     which the summed PE reaches a specified threshold.
+
+    Args:
+        df, dataframe with observations
+        latitude, float. Required argument of UTide
+        settings, dictionary with the following fields:
+            nameColumn, timeColumn and levelColumn; all string. Specifying the names
+            of the name, time and level columns respectively
+    
+    Returns:
+        selected constituents as a list of strings
     """
     #TODO specify more methods for selecting constituents; primarily prescribed sets
     name = df[settings['nameColumn']].unique().squeeze()
@@ -181,7 +192,7 @@ def _timeseries_segment(
     return df
 
 
-def constit_segment(
+def _constit_segment(
     df,
     col_datetime,
     col_h, include_phase = False,
@@ -263,7 +274,7 @@ def analyse_long_series(
         pd.Grouper(col_loc)], group_keys = False)  # group_keys added to silence deprecation warning
 
     constit = gr.progress_apply(
-        lambda gr: constit_segment(
+        lambda gr: _constit_segment(
             gr, col_datetime, col_h, 
             include_phase = include_phase, **kwargs)
      )
