@@ -15,9 +15,10 @@ from datetime import datetime as dt
 import hvec_tide as tide
 
 
-def test_select_constituents():
-    df = pd.read_excel(r'./tests/data_sample.xlsx')
+df = pd.read_excel(r'./tests/data_sample.xlsx')
 
+
+def test_select_constituents():
     settings = {
         'nameColumn': 'naam'
         , 'timeColumn': 'datetime'
@@ -30,7 +31,6 @@ def test_select_constituents():
 
 
 def test_run_utide_solve():
-    df = pd.read_excel(r'./tests/data_sample.xlsx')
     t = df['datetime']
     h = df['h']
     sol = tide.run_utide_solve(t, h, lat = 52, verbose = False)
@@ -38,7 +38,6 @@ def test_run_utide_solve():
 
 
 def test_constit_segment():
-    df = pd.read_excel(r'./tests/data_sample.xlsx')
     sol = tide.analysers._constit_segment(
         df,
         col_datetime = 'datetime',
@@ -49,7 +48,6 @@ def test_constit_segment():
 
 
 def test_tide_and_setup():
-    df = pd.read_excel(r'./tests/data_sample.xlsx')
     time = df['datetime']
     h = df['h']
 
@@ -58,8 +56,6 @@ def test_tide_and_setup():
 
 
 def test_analyse_long_series():
-    df = pd.read_excel(r'./tests/data_sample.xlsx')
-
     start = dt.now()
     _, constit = tide.analyse_long_series(
         df, lat = 52, trend = False, include_phase = False, delta_T = 'Y', verbose = False)
