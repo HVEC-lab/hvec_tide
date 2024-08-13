@@ -244,6 +244,7 @@ def analyse_long_series(
     df: dataframe with water level observations
     col_datetime: name of the datetime column
     col_h: name of the water level column
+    col_loc: location column
     delta_T: time interval specified for a pd.Grouper object
 
     Returns
